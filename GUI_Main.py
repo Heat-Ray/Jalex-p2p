@@ -27,10 +27,20 @@ def checkFileValidity():
     print("Checking file validity..")
     if os.path.isfile(entry1.get()):
         entry1.config(fg="green")
+        btn2.flash()    #Flash button when ready to share
     else:
         entry1.config(fg="red")
-    window.after(2000, checkFileValidity)
+    window.after(1000, checkFileValidity)
 
+def pause_resume():
+    print("Pause Resume Button clicked")
+    if(btn3['text'] == "Pause"):
+        btn3.config(text="Resume")
+    else:
+        btn3.config(text="Pause")
+
+
+#************Main***************
 window = Tk()
 window.title("Jalex-p2p")
 window.geometry("600x500+150+50")
@@ -68,5 +78,10 @@ btn2 = Button(window, text="Start sharing", font=("Arial",12), command=startShar
 btn2.pack()
 frame5.pack(fill="both", pady=10)
 
-window.after(2000, checkFileValidity)
+frame6 = Frame(window)
+btn3 = Button(frame6, text="Pause", font=("Arial",12), command=pause_resume)
+btn3.pack()
+frame6.pack(fill="both", pady=20)
+
+window.after(1000, checkFileValidity)
 window.mainloop()
