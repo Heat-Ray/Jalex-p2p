@@ -1,14 +1,19 @@
 from tkinter import *
 from threading import *
 from tkinter import filedialog
+from tkinter import ttk
 import os
 import file_share
+import globalVars
 
 def chooseFile():
     filePath = filedialog.askopenfilename() #!filetypes=(("All files", "*.*")) Why this is not working?
     entry1.delete(0,END)
     entry1.insert(0, filePath)
     print(entry1.get())
+    filesize = os.path.getsize(entry1.get())
+    print("Filesize: ", end="")
+    print(filesize)
 
 def chooseRadio():
     if(var.get() == "Send"):
@@ -21,14 +26,16 @@ def chooseRadio():
 def startShare():
     if (var.get() == "Send"):
         global th1
-        th1=Thread(target=file_share.starts_connection_server, args=(entry1.get(),))
+        globalVars.filesize = os.path.getsize(entry1.get())
+        print(globalVars.filesize)
+        th1=Thread(target=file_share.starts_connection_server, args=(entry1.get(), globalVars.filesize))
         th1.start()
         
     else:
         global th2
         th2=Thread(target=file_share.starts_listening_client, args=(l,))
         th2.start()
-    
+
 def checkFileValidity():
     if os.path.isfile(entry1.get()):
         entry1.config(fg="green")
@@ -41,7 +48,18 @@ def checkFileValidity():
             btn2.config(state=DISABLED)
         else:
             btn2.config(state=NORMAL)
-        window.after(1000, checkFileValidity)
+
+def checkProgressbarStatus():
+    if (var.get() == "Send"):
+        percentage = (globalVars.bytesSent / globalVars.filesize) * 100
+    elif (var.get() == "Recieve"):
+        percentage = (globalVars.bytesRecieved / globalVars.filesize) * 100
+    progressBar1['value'] = percentage
+
+def loopEvents():
+    checkFileValidity()
+    checkProgressbarStatus()
+    window.after(1000, loopEvents)
 
 def pause_resume():
     print("Pause Resume Button clicked")
@@ -98,7 +116,13 @@ btn3 = Button(frame6, text="Pause", font=("Arial",12), command=pause_resume)
 btn3.pack()
 frame6.pack(fill="both", pady=20)
 
+frame7 = Frame(window)
+progressBar1 = ttk.Progressbar(frame7, orient="horizontal", length=40, mode="determinate")
+progressBar1.pack(fill="x", padx=20)
+progressBar1['value']=0
+progressBar1['maximum']=100
+frame7.pack(fill="both", pady=20)
 
-window.after(1000, checkFileValidity)
+window.after(1000, loopEvents)
 window.mainloop()
         
