@@ -19,9 +19,11 @@ def chooseRadio():
     if(var.get() == "Send"):
         entry1.config(state=NORMAL)
         btn1.config(state=NORMAL)
+        btn3.config(state=DISABLED)
     else:
         entry1.config(state=DISABLED)
         btn1.config(state=DISABLED)
+        btn3.config(state=NORMAL)
 
 def startShare():
     if (var.get() == "Send"):
