@@ -1,1 +1,1 @@
-# Jalex is an attempt to make point to point network manager in Python.
+# Jalex is a point to point file transfer manager built using Python and Tkinter.
